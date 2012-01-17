@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NeuronLib", "NeuralNet\NeuralNet.vcxproj", "{CD4C674D-DB44-4DB9-BBAC-7DA2194AAA1A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NeuronApp", "NeuronApp\NeuronApp.vcxproj", "{88A46374-EB02-499D-A514-828D68915959}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CD4C674D-DB44-4DB9-BBAC-7DA2194AAA1A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CD4C674D-DB44-4DB9-BBAC-7DA2194AAA1A}.Debug|Win32.Build.0 = Debug|Win32
+		{CD4C674D-DB44-4DB9-BBAC-7DA2194AAA1A}.Release|Win32.ActiveCfg = Release|Win32
+		{CD4C674D-DB44-4DB9-BBAC-7DA2194AAA1A}.Release|Win32.Build.0 = Release|Win32
+		{88A46374-EB02-499D-A514-828D68915959}.Debug|Win32.ActiveCfg = Debug|Win32
+		{88A46374-EB02-499D-A514-828D68915959}.Debug|Win32.Build.0 = Debug|Win32
+		{88A46374-EB02-499D-A514-828D68915959}.Release|Win32.ActiveCfg = Release|Win32
+		{88A46374-EB02-499D-A514-828D68915959}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
