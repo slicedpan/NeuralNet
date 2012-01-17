@@ -16,8 +16,8 @@
 using namespace std;
 
 // Initial size of graphics window.
-const int WIDTH  = 600;
-const int HEIGHT = 400;
+const int WIDTH  = 1200;
+const int HEIGHT = 800;
 
 // Current size of window.
 int width  = WIDTH;
@@ -92,7 +92,9 @@ void GenerateShape()
 			//printf("%f\n", inputArray[i]);
 		}
 		else
+		{
 			inputArray[i] = randFloat();
+		}
 	}
 	
 }

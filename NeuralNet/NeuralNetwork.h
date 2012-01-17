@@ -32,8 +32,8 @@ private:
 	std::vector<InputNode*> inputLayer;
 	std::vector<NetChange> netChanges;
 	std::vector<NodeChange> nodeChanges;
-	void ChangeNodeValue();
-	void AddConnection();
-	void ChangeConnectionWeight();
+	NodeChange ChangeNodeValue();
+	NetChange AddConnection();
+	NetChange ChangeConnectionWeight();
 };
 

@@ -5,7 +5,7 @@
 #include "Connection.h"
 #include <cstdlib>
 
-void NeuralNetwork::ChangeConnectionWeight()
+NetChange NeuralNetwork::ChangeConnectionWeight()
 {
 	NetChange change;
 	change.layer = rand() % depth + 1;
@@ -20,9 +20,10 @@ void NeuralNetwork::ChangeConnectionWeight()
 		change.newWeight = 0.0f;
 	connections[change.layer][change.startIndex]->weight = change.newWeight;
 	netChanges.push_back(change);
+	return change;
 }
 
-void NeuralNetwork::AddConnection()
+NetChange NeuralNetwork::AddConnection()
 {
 	NetChange change;
 	change.layer = rand() % depth + 1;
@@ -40,9 +41,10 @@ void NeuralNetwork::AddConnection()
 	change.startIndex = connections[change.layer].size() - 1;
 	netChanges.push_back(change);
 	++connectionCount;
+	return change;
 }
 
-void NeuralNetwork::ChangeNodeValue()
+NodeChange NeuralNetwork::ChangeNodeValue()
 {
 	NodeChange change;
 	change.layer = rand() % depth + 1;
@@ -51,6 +53,7 @@ void NeuralNetwork::ChangeNodeValue()
 	change.newValue = (float) rand() / RAND_MAX;
 	perceptrons[change.layer][change.index]->value = change.newValue;
 	nodeChanges.push_back(change);
+	return change;
 }
 
 void NeuralNetwork::Revert()
