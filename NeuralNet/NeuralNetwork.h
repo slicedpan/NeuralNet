@@ -20,8 +20,8 @@ public:
 	int nodeCount;
 	int connectionCount;
 	void Mutate();
-	void Revert();
-	void ReApply();
+	void Revert(std::vector<NodeChange> nodeChanges, std::vector<NetChange> netChanges);
+	void ReApply(std::vector<NodeChange> nodeChanges, std::vector<NetChange> netChanges);
 private:
 	int inputs;
 	int outputs;
@@ -30,8 +30,6 @@ private:
 	std::vector<std::vector<Perceptron*> > perceptrons;
 	std::vector<std::vector<Connection*> > connections;
 	std::vector<InputNode*> inputLayer;
-	std::vector<NetChange> netChanges;
-	std::vector<NodeChange> nodeChanges;
 	NodeChange ChangeNodeValue();
 	NetChange AddConnection();
 	NetChange ChangeConnectionWeight();

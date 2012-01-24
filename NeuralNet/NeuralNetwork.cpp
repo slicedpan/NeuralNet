@@ -19,7 +19,6 @@ NetChange NeuralNetwork::ChangeConnectionWeight()
 	else if (change.newWeight < 0.0f)
 		change.newWeight = 0.0f;
 	connections[change.layer][change.startIndex]->weight = change.newWeight;
-	netChanges.push_back(change);
 	return change;
 }
 
@@ -36,11 +35,8 @@ NetChange NeuralNetwork::AddConnection()
 		change.newWeight = 1.0f;
 	else if (change.newWeight < 0.0f)
 		change.newWeight = 0.0f;
-	int endIndex = rand() % perceptrons[change.layer + 1].size();
-	connections[change.layer].push_back(new Connection(change.startIndex, change.newWeight, perceptrons[change.layer + 1][endIndex]));
+	int endIndex = rand() % perceptrons[change.layer + 1].size();	
 	change.startIndex = connections[change.layer].size() - 1;
-	netChanges.push_back(change);
-	++connectionCount;
 	return change;
 }
 
@@ -52,11 +48,10 @@ NodeChange NeuralNetwork::ChangeNodeValue()
 	change.oldValue = perceptrons[change.layer][change.index]->value;
 	change.newValue = (float) rand() / RAND_MAX;
 	perceptrons[change.layer][change.index]->value = change.newValue;
-	nodeChanges.push_back(change);
 	return change;
 }
 
-void NeuralNetwork::Revert()
+void NeuralNetwork::Revert(std::vector<NodeChange> nodeChanges, std::vector<NetChange> netChanges)
 {
 	for (int i = 0; i < nodeChanges.size(); ++i)
 	{
@@ -70,7 +65,7 @@ void NeuralNetwork::Revert()
 	}
 }
 
-void NeuralNetwork::ReApply()
+void NeuralNetwork::ReApply(std::vector<NodeChange> nodeChanges, std::vector<NetChange> netChanges)
 {
 	for (int i = 0; i < nodeChanges.size(); ++i)
 	{
@@ -87,8 +82,6 @@ void NeuralNetwork::ReApply()
 void NeuralNetwork::Mutate()
 {
 	int numChanges = 5 + rand() % 5;
-	netChanges.clear();
-	nodeChanges.clear();
 	for (int i = 0; i < numChanges; ++i)
 	{
 		int type = rand() % 3;

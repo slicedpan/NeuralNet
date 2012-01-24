@@ -57,7 +57,7 @@ float origArray[8];
 void setup()
 {
 	srand(time(NULL));
-	nnet = new NeuralNetwork(16, 8, 7, 250);
+	nnet = new NeuralNetwork(8, 8, 7, 250);
 		float fw = (float)width;
 	float fh = (float)height;
 	for (int i = 0; i < 16; ++i)
@@ -84,17 +84,10 @@ void GenerateShape()
 	float fh = (float)height;
 	objects.push_back(new Rect(Vec2(output[0] * fw,output[1] * fh), Vec2(output[2] * fw, output[3] * fh), Vec4(output[4], output[5], output[6], output[7])));
 	
-	for (int i = 0; i < 16; ++i)
+	for (int i = 0; i < 8; ++i)
 	{
-		if (i % 2 == 0)
-		{
-			inputArray[i] = output[i / 2];
-			//printf("%f\n", inputArray[i]);
-		}
-		else
-		{
-			inputArray[i] = randFloat();
-		}
+		inputArray[i] = output[i];
+
 	}
 	
 }
