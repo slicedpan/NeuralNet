@@ -26,6 +26,8 @@ public:
 	void SaveToFile(char* filename);
 	static NeuralNetwork* LoadFromFile(char* filename);
 private:
+	NeuralNetwork();	
+	bool InitFromFile(char* filename);
 	int inputs;
 	int outputs;
 	int depth;

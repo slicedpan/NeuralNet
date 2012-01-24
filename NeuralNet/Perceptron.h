@@ -10,6 +10,10 @@ public:
 	virtual float GetValue();
 	virtual bool CheckFired();
 	virtual void Reset();
+	inline float GetThreshold()
+	{
+		return threshold;
+	}
 	float value;
 protected:
 	float threshold;

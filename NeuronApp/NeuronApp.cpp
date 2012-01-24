@@ -84,7 +84,8 @@ void GenerateMutations()
 void setup()
 {
 	srand(time(NULL));
-	nnet = new NeuralNetwork(8, 8, 5, 250);
+	if (!(nnet = NeuralNetwork::LoadFromFile(filename)))
+		nnet = new NeuralNetwork(8, 8, 5, 250);
 	float fw = (float)width;
 	float fh = (float)height;
 	for (int i = 0; i < 16; ++i)
@@ -241,6 +242,10 @@ void functionKeys (int key, int x, int y)
    }
 }
 
+void clean()
+{
+	nnet->SaveToFile(filename);
+}
 
 void main (int argc, char **argv)
 {
@@ -269,6 +274,6 @@ void main (int argc, char **argv)
 
 	setup();
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
+	atexit(clean);
 	glutMainLoop();
 }

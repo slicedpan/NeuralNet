@@ -2,9 +2,10 @@
 #include "Connection.h"
 
 
-Connection::Connection(int index, float weight, Perceptron* endPoint)
+Connection::Connection(int index, float weight, Perceptron* endPoint, int outIndex)
 {
 	inputIndex = index;
+	outputIndex = outIndex;
 	this->weight = weight;
 	connected = endPoint;
 }
