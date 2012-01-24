@@ -11,13 +11,14 @@
 #include <vector>
 #include "DrawableObject.h"
 #include "Rect.h"
-#include "NeuralNetwork.h"
+#include "../NeuralNet/NeuralNetwork.h"
+#include "../NeuralNet/ChangeContainer.h"
 
 using namespace std;
 
 // Initial size of graphics window.
 const int WIDTH  = 1200;
-const int HEIGHT = 800;
+const int HEIGHT = 600;
 
 // Current size of window.
 int width  = WIDTH;
@@ -39,11 +40,13 @@ double alpha = 0;                                  // Set by idle function.
 double beta = 0;                                   // Set by mouse X.
 double ldistance = - (farPlane - nearPlane) / 2;    // Set by mouse Y.
 
-// This function is called to display the scene.
+void GenerateShapes(Rect* bounds);
 
 NeuralNetwork * nnet;
 
 vector<DrawableObject*> objects;
+vector<Rect*> rectangles;
+vector<ChangeContainer*> changes;
 
 float inputArray[16];
 
@@ -54,17 +57,49 @@ float randFloat()
 
 float origArray[8];
 
+void GenerateMutations()
+{
+	for (int i = 0; i < changes.size(); ++i)
+	{
+		delete changes[i];
+	}
+	changes.clear();
+	for (int i = 0; i < objects.size(); ++i)
+	{
+		delete objects[i];
+	}
+	objects.clear();
+	for (int i = 0; i < 8; ++i)
+	{
+		ChangeContainer* changeContainer = nnet->Mutate(40);
+		changes.push_back(changeContainer);
+		nnet->ApplyChanges(changeContainer);
+		GenerateShapes(rectangles[i]);
+		nnet->Revert(changeContainer);
+	}
+}
+
 void setup()
 {
 	srand(time(NULL));
-	nnet = new NeuralNetwork(8, 8, 7, 250);
-		float fw = (float)width;
+	nnet = new NeuralNetwork(8, 8, 10, 250);
+	float fw = (float)width;
 	float fh = (float)height;
 	for (int i = 0; i < 16; ++i)
 	{
 		origArray[i] = randFloat();
 		inputArray[i] = origArray[i];
 	}
+	for (int i = 0; i < 4; ++i)
+	{
+		Vec2 extents(150.0f, 150.0f);
+		Vec4 colour(0.7f, 0.7f, 0.7f, 0.0f);
+		Rect* rect = new Rect(Vec2(150.0f + (i * 300.0f), 150.0f), extents, colour); 
+		rectangles.push_back(rect);
+		rect = new Rect(Vec2(150.0f + (i * 300.0f), 450.0f), extents, colour);
+		rectangles.push_back(rect);
+	}
+	GenerateMutations();
 }
 
 void display ()
@@ -74,38 +109,37 @@ void display ()
 	{
 		objects[i]->Draw();
 	}
+	for (int i = 0; i < rectangles.size(); ++i)
+	{
+		rectangles[i]->DrawBorder();
+	}
 	glutSwapBuffers();
 }
 
-void GenerateShape()
+void GenerateShape(Rect* bounds)
 {
-	float* output = nnet->Compute(inputArray);
-	float fw = (float)width;
-	float fh = (float)height;
-	objects.push_back(new Rect(Vec2(output[0] * fw,output[1] * fh), Vec2(output[2] * fw, output[3] * fh), Vec4(output[4], output[5], output[6], output[7])));
+	float* output = nnet->Compute(inputArray);	
+	Vec2 offset = bounds->GetCentre() - bounds->GetExtents();
+	float width = bounds->GetExtents()[0] * 2.0f;
+	float height = bounds->GetExtents()[1] * 2.0f;
+	objects.push_back(new Rect(Vec2(output[0] * width,output[1] * height) + offset, Vec2(output[2] * width, output[3] * height), \
+		Vec4(output[4], output[5], output[6], output[7])));
 	
 	for (int i = 0; i < 8; ++i)
 	{
 		inputArray[i] = output[i];
-
-	}
-	
+	}	
 }
 
-void GenerateShapes()
+void GenerateShapes(Rect* bounds)
 {
-	for (int i = 0; i < objects.size(); ++i)
-	{
-		delete objects[i];
-	}
 	for (int i = 0; i < 8; ++i)
 	{
 		inputArray[i] = origArray[i];
 	}
-	objects.clear();
-	for (int i = 0; i < 100; ++i)
+	for (int i = 0; i < 30; ++i)
 	{
-		GenerateShape();
+		GenerateShape(bounds);
 	}
 }
 
@@ -131,6 +165,22 @@ void mouseMovement (int mx, int my)
 
    // Redisplay image.
    glutPostRedisplay();
+}
+
+void mouseClick(int button, int state, int x, int y)
+{
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+	{
+		for (int i = 0; i < rectangles.size(); ++i)
+		{
+			if (rectangles[i]->Intersects(Vec2((float)x, (float)y)))
+			{
+				nnet->ApplyChanges(changes[i]);
+				GenerateMutations();
+				break;
+			}
+		}
+	}
 }
 
 // Respond to window resizing, preserving proportions.
@@ -159,25 +209,14 @@ void graphicKeys (unsigned char key, int x, int y)
 {
 	switch (key)
 	{
-   case 'h':
-      help();
-      break;
-   case 'm':
-	   nnet->Mutate();
-	   GenerateShapes();
-	   break;
-   case 'b':
-	   nnet->Revert();
-	   GenerateShapes();
-	   break;
-   case 'g':
-	   nnet->ReApply();
-	   GenerateShapes();
-	   break;
+	case 'h':
+		help();
+		break;
 	case 27:
 		exit(0);
-   default:
-      cout << key << endl;
+		break;
+	default:
+		cout << key << endl;
 	}
 }
 
@@ -211,6 +250,7 @@ void main (int argc, char **argv)
 	glutKeyboardFunc(graphicKeys);
 	glutSpecialFunc(functionKeys);
 	glutMotionFunc(mouseMovement);
+	glutMouseFunc(mouseClick);
 	glutIdleFunc(idle);
 
 	// OpenGL initialization

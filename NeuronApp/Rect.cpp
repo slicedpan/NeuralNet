@@ -22,3 +22,15 @@ void Rect::Draw()
 	glVertex2f(centre[0] - extents[0], centre[1] + extents[1]);
 	glEnd();
 }
+
+void Rect::DrawBorder()
+{
+	glBegin(GL_LINE_STRIP);
+	glColor4fv(colour.Ref());
+	glVertex2f(centre[0] + extents[0], centre[1] + extents[1]);
+	glVertex2f(centre[0] + extents[0], centre[1] - extents[1]);
+	glVertex2f(centre[0] - extents[0], centre[1] - extents[1]);
+	glVertex2f(centre[0] - extents[0], centre[1] + extents[1]);
+	glVertex2f(centre[0] + extents[0], centre[1] + extents[1]);
+	glEnd();
+}

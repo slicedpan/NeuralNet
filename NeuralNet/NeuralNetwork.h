@@ -7,6 +7,7 @@
 class Perceptron;
 class Connection;
 class InputNode;
+class ChangeContainer;
 
 class NeuralNetwork
 {
@@ -19,9 +20,9 @@ public:
 	int fireCount;
 	int nodeCount;
 	int connectionCount;
-	void Mutate();
-	void Revert(std::vector<NodeChange> nodeChanges, std::vector<NetChange> netChanges);
-	void ReApply(std::vector<NodeChange> nodeChanges, std::vector<NetChange> netChanges);
+	ChangeContainer* Mutate(int numChanges);
+	void Revert(ChangeContainer* changeContainer);
+	void ApplyChanges(ChangeContainer* changeContainer);
 private:
 	int inputs;
 	int outputs;
@@ -30,8 +31,11 @@ private:
 	std::vector<std::vector<Perceptron*> > perceptrons;
 	std::vector<std::vector<Connection*> > connections;
 	std::vector<InputNode*> inputLayer;
-	NodeChange ChangeNodeValue();
-	NetChange AddConnection();
-	NetChange ChangeConnectionWeight();
+	NodeChange* ChangeNodeValue();
+	NetChange* ChangeConnectionWeight();
+	void ApplyNodeChange(NodeChange* change);
+	void ApplyNetChange(NetChange* change);
+	void RevertNodeChange(NodeChange* change);
+	void RevertNetChange(NetChange* change);
 };
 

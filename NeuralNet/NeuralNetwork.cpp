@@ -3,25 +3,46 @@
 #include "OutputNode.h"
 #include "InputNode.h"
 #include "Connection.h"
+#include "ChangeContainer.h"
 #include <cstdlib>
 
-NetChange NeuralNetwork::ChangeConnectionWeight()
+NetChange* NeuralNetwork::ChangeConnectionWeight()
 {
-	NetChange change;
-	change.layer = rand() % depth + 1;
-	change.startIndex = rand() % connections[change.layer].size();
-	change.oldWeight = connections[change.layer][change.startIndex]->weight;
-	change.newWeight = ((float) rand() / RAND_MAX) - 0.5f;
-	change.newWeight *= 0.5f;	
-	change.newWeight += change.oldWeight;
-	if (change.newWeight > 1.0f)
-		change.newWeight = 1.0f;
-	else if (change.newWeight < 0.0f)
-		change.newWeight = 0.0f;
-	connections[change.layer][change.startIndex]->weight = change.newWeight;
+	NetChange* change = new NetChange();
+	change->layer = rand() % depth + 1;
+	change->startIndex = rand() % connections[change->layer].size();
+	change->oldWeight = connections[change->layer][change->startIndex]->weight;
+	change->newWeight = ((float) rand() / RAND_MAX) - 0.5f;
+	change->newWeight *= 0.5f;	
+	change->newWeight += change->oldWeight;
+	if (change->newWeight > 1.0f)
+		change->newWeight = 1.0f;
+	else if (change->newWeight < 0.0f)
+		change->newWeight = 0.0f;
 	return change;
 }
 
+void NeuralNetwork::ApplyNetChange(NetChange* change)
+{
+	connections[change->layer][change->startIndex]->weight = change->newWeight;
+}
+
+void NeuralNetwork::ApplyNodeChange(NodeChange* change)
+{
+	perceptrons[change->layer][change->index]->value = change->newValue;
+}
+
+void NeuralNetwork::RevertNetChange(NetChange* change)
+{
+	connections[change->layer][change->startIndex]->weight = change->oldWeight;
+}
+
+void NeuralNetwork::RevertNodeChange(NodeChange* change)
+{
+	perceptrons[change->layer][change->index]->value = change->oldValue;
+}
+
+/*
 NetChange NeuralNetwork::AddConnection()
 {
 	NetChange change;
@@ -39,66 +60,63 @@ NetChange NeuralNetwork::AddConnection()
 	change.startIndex = connections[change.layer].size() - 1;
 	return change;
 }
+*/
 
-NodeChange NeuralNetwork::ChangeNodeValue()
+NodeChange* NeuralNetwork::ChangeNodeValue()
 {
-	NodeChange change;
-	change.layer = rand() % depth + 1;
-	change.index = rand() % perceptrons[change.layer].size();
-	change.oldValue = perceptrons[change.layer][change.index]->value;
-	change.newValue = (float) rand() / RAND_MAX;
-	perceptrons[change.layer][change.index]->value = change.newValue;
+	NodeChange* change = new NodeChange();
+	change->layer = rand() % depth + 1;
+	change->index = rand() % perceptrons[change->layer].size();
+	change->oldValue = perceptrons[change->layer][change->index]->value;
+	change->newValue = (float) rand() / RAND_MAX;
 	return change;
 }
 
-void NeuralNetwork::Revert(std::vector<NodeChange> nodeChanges, std::vector<NetChange> netChanges)
+void NeuralNetwork::Revert(ChangeContainer* changeContainer)
 {
-	for (int i = 0; i < nodeChanges.size(); ++i)
+	for (int i = 0; i < changeContainer->nodeChanges.size(); ++i)
 	{
-		Perceptron* node = perceptrons[nodeChanges[i].layer][nodeChanges[i].index];
-		node->value = nodeChanges[i].oldValue;
+		Perceptron* node = perceptrons[changeContainer->nodeChanges[i]->layer][changeContainer->nodeChanges[i]->index];
+		node->value = changeContainer->nodeChanges[i]->oldValue;
 	}
-	for (int i = 0; i < netChanges.size(); ++i)
+	for (int i = 0; i < changeContainer->netChanges.size(); ++i)
 	{
-		Connection* conn = connections[netChanges[i].layer][netChanges[i].startIndex];
-		conn->weight = netChanges[i].oldWeight;
+		Connection* conn = connections[changeContainer->netChanges[i]->layer][changeContainer->netChanges[i]->startIndex];
+		conn->weight = changeContainer->netChanges[i]->oldWeight;
 	}
 }
 
-void NeuralNetwork::ReApply(std::vector<NodeChange> nodeChanges, std::vector<NetChange> netChanges)
+void NeuralNetwork::ApplyChanges(ChangeContainer* changeContainer)
 {
-	for (int i = 0; i < nodeChanges.size(); ++i)
+	for (int i = 0; i < changeContainer->nodeChanges.size(); ++i)
 	{
-		Perceptron* node = perceptrons[nodeChanges[i].layer][nodeChanges[i].index];
-		node->value += nodeChanges[i].newValue - nodeChanges[i].oldValue;
+		Perceptron* node = perceptrons[changeContainer->nodeChanges[i]->layer][changeContainer->nodeChanges[i]->index];
+		node->value += changeContainer->nodeChanges[i]->newValue - changeContainer->nodeChanges[i]->oldValue;
 	}
-	for (int i = 0; i < netChanges.size(); ++i)
+	for (int i = 0; i < changeContainer->netChanges.size(); ++i)
 	{
-		Connection* conn = connections[netChanges[i].layer][netChanges[i].startIndex];
-		conn->weight += netChanges[i].newWeight - netChanges[i].oldWeight;
+		Connection* conn = connections[changeContainer->netChanges[i]->layer][changeContainer->netChanges[i]->startIndex];
+		conn->weight += changeContainer->netChanges[i]->newWeight - changeContainer->netChanges[i]->oldWeight;
 	}
 }
 
-void NeuralNetwork::Mutate()
+ChangeContainer* NeuralNetwork::Mutate(int numChanges)
 {
-	int numChanges = 5 + rand() % 5;
+	ChangeContainer* changeContainer = new ChangeContainer();
 	for (int i = 0; i < numChanges; ++i)
 	{
-		int type = rand() % 3;
+		int type = rand() % 2;
 		switch (type)
 		{
 		case 0:
-			ChangeConnectionWeight();
+			changeContainer->netChanges.push_back(ChangeConnectionWeight());
 			break;
 		case 1:
-			AddConnection();
-			break;
-		case 2:
-			ChangeNodeValue();
+			changeContainer->nodeChanges.push_back(ChangeNodeValue());
 			break;
 		}
 	}
-	printf("%d connections\n", connectionCount);
+	return changeContainer;
 }
 
 NeuralNetwork::NeuralNetwork(int numberOfInputs, int numberOfOutputs, int depth, int maxWidth)
