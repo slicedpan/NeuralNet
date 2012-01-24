@@ -84,7 +84,7 @@ void GenerateMutations()
 void setup()
 {
 	srand(time(NULL));
-	nnet = new NeuralNetwork(8, 8, 10, 250);
+	nnet = new NeuralNetwork(8, 8, 5, 250);
 	float fw = (float)width;
 	float fh = (float)height;
 	for (int i = 0; i < 16; ++i)
@@ -107,13 +107,10 @@ void setup()
 void display ()
 {
  	glClear(GL_COLOR_BUFFER_BIT);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	for (int i = 0; i < objects.size(); ++i)
 	{
 		objects[i]->Draw();
 	}
-	glDisable(GL_BLEND);
 	for (int i = 0; i < rectangles.size(); ++i)
 	{
 		rectangles[i]->DrawBorder();
@@ -219,6 +216,10 @@ void graphicKeys (unsigned char key, int x, int y)
 		break;
 	case 27:
 		exit(0);
+		break;
+	case 'm':
+		nnet->ApplyChanges(nnet->Mutate(3000));
+		GenerateMutations();
 		break;
 	default:
 		cout << key << endl;

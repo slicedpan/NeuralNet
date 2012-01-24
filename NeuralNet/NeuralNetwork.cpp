@@ -119,6 +119,16 @@ ChangeContainer* NeuralNetwork::Mutate(int numChanges)
 	return changeContainer;
 }
 
+NeuralNetwork* NeuralNetwork::LoadFromFile(char* filename)
+{
+
+}
+
+void NeuralNetwork::SaveToFile(char* filename)
+{
+
+}
+
 NeuralNetwork::NeuralNetwork(int numberOfInputs, int numberOfOutputs, int depth, int maxWidth)
 {
 	inputs = numberOfInputs;
@@ -163,7 +173,7 @@ NeuralNetwork::NeuralNetwork(int numberOfInputs, int numberOfOutputs, int depth,
 	for (int i = 0; i <= depth; ++i)
 	{
 		std::vector<Connection*> connectionLayer;
-		int connectionNum = (rand() % perceptrons[i].size()) * 10 ;
+		int connectionNum = (rand() % perceptrons[i].size()) * 15;
 		connectionNum += perceptrons[i].size() * 2;
 		connectionCount += connectionNum;
 		for (int j = 0; j < connectionNum; ++j)

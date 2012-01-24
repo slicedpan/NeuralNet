@@ -23,6 +23,8 @@ public:
 	ChangeContainer* Mutate(int numChanges);
 	void Revert(ChangeContainer* changeContainer);
 	void ApplyChanges(ChangeContainer* changeContainer);
+	void SaveToFile(char* filename);
+	static NeuralNetwork* LoadFromFile(char* filename);
 private:
 	int inputs;
 	int outputs;
