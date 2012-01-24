@@ -44,6 +44,8 @@ void GenerateShapes(Rect* bounds);
 
 NeuralNetwork * nnet;
 
+char* filename = "nnet.bin";
+
 vector<DrawableObject*> objects;
 vector<Rect*> rectangles;
 vector<ChangeContainer*> changes;
@@ -105,10 +107,13 @@ void setup()
 void display ()
 {
  	glClear(GL_COLOR_BUFFER_BIT);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	for (int i = 0; i < objects.size(); ++i)
 	{
 		objects[i]->Draw();
 	}
+	glDisable(GL_BLEND);
 	for (int i = 0; i < rectangles.size(); ++i)
 	{
 		rectangles[i]->DrawBorder();
