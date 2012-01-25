@@ -156,8 +156,8 @@ bool NeuralNetwork::InitFromFile(char* filename)
 		layer.clear();
 		for (int i = 0; i < layerWidth; ++i)
 		{			
-			int thresh;
-			int value;
+			float thresh;
+			float value;
 			fread(&value, sizeof(float), 1, file);
 			fread(&thresh, sizeof(float), 1, file);
 			layer.push_back(new Perceptron(thresh, value));
@@ -166,12 +166,13 @@ bool NeuralNetwork::InitFromFile(char* filename)
 	}
 
 	fread(&layerWidth, sizeof(int), 1, file);
+	layer.clear();
 	for (int i = 0; i < layerWidth; ++i)
 	{
-		int value;
-		int thresh;
-		fread(&value, sizeof(int), 1, file);
-		fread(&thresh, sizeof(int), 1, file);
+		float value;
+		float thresh;
+		fread(&value, sizeof(float), 1, file);
+		fread(&thresh, sizeof(float), 1, file);
 		layer.push_back(new OutputNode());
 	}
 
@@ -218,17 +219,17 @@ void NeuralNetwork::SaveToFile(char* filename)
 		for (int i = 0; i < layerWidth; ++i)
 		{
 			fwrite(&(perceptrons[j][i]->value), sizeof(float), 1, file);
-			int thresh = perceptrons[j][i]->GetThreshold();
+			float thresh = perceptrons[j][i]->GetThreshold();
 			fwrite(&thresh, sizeof(float), 1, file);
 		}
 	}
 
-	layerWidth = perceptrons[depth].size();
+	layerWidth = perceptrons[depth + 1].size();
 	fwrite(&layerWidth, sizeof(int), 1, file);
 	for (int i = 0; i < layerWidth; ++i)
 	{
-		fwrite(&(perceptrons[depth][i]->value), sizeof(float), 1, file);
-		int thresh = perceptrons[depth][i]->GetThreshold();
+		fwrite(&(perceptrons[depth + 1][i]->value), sizeof(float), 1, file);
+		float thresh = perceptrons[depth + 1][i]->GetThreshold();
 		fwrite(&thresh, sizeof(float), 1, file);
 	}
 
@@ -240,7 +241,7 @@ void NeuralNetwork::SaveToFile(char* filename)
 		{
 			fwrite(&connections[j][i]->inputIndex, sizeof(int), 1, file);
 			fwrite(&connections[j][i]->outputIndex, sizeof(int), 1, file);
-			fwrite(&connections[j][i]->weight, sizeof(int), 1, file);
+			fwrite(&connections[j][i]->weight, sizeof(float), 1, file);
 		}
 	}
 }
