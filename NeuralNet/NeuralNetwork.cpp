@@ -282,7 +282,8 @@ NeuralNetwork::NeuralNetwork(int numberOfInputs, int numberOfOutputs, int depth,
 
 	for (int i = 0; i < depth; ++i)
 	{
-		int width = (rand() % (maxWidth / 2)) + (maxWidth / 2);
+		//int width = (rand() % (maxWidth / 2)) + (maxWidth / 2);
+		int width = maxWidth;
 		std::vector<Perceptron*> layer;
 		for (int j = 0; j < width; ++j)
 		{

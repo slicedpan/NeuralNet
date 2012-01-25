@@ -77,7 +77,7 @@ void GenerateMutations()
 	}
 	for (int i = 0; i < 8; ++i)
 	{
-		ChangeContainer* changeContainer = nnet->Mutate(20);
+		ChangeContainer* changeContainer = nnet->Mutate(400);
 		changes.push_back(changeContainer);
 		nnet->ApplyChanges(changeContainer);
 		GenerateShapes(rectangles[i], i);
@@ -89,7 +89,7 @@ void setup()
 {
 	srand(time(NULL));
 	if (!(nnet = NeuralNetwork::LoadFromFile(filename)))
-		nnet = new NeuralNetwork(8, 80, 5, 50);
+		nnet = new NeuralNetwork(8, 80, 10, 50);
 	float fw = (float)width;
 	float fh = (float)height;
 	for (int i = 0; i < 16; ++i)
@@ -99,7 +99,7 @@ void setup()
 	}
 	for (int i = 0; i < 4; ++i)
 	{
-		Vec2 extents(150.0f, 150.0f);
+		Vec2 extents(300.0f, 300.0f);
 		Vec4 colour(0.7f, 0.7f, 0.7f, 0.0f);
 		Rect* rect = new Rect(Vec2(150.0f + (i * 300.0f), 150.0f), extents, colour); 
 		rectangles.push_back(rect);
@@ -115,7 +115,7 @@ void display ()
 	glEnable(GL_SCISSOR_TEST);
 	for (int j = 0; j < 8; ++j)
 	{
-		rectangles[j]->SetScissor();
+		//rectangles[j]->SetScissor();
 		for (int i = 0; i < objects[j].size(); ++i)
 		{
 			objects[j][i]->Draw();
