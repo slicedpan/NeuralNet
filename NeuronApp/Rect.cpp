@@ -34,3 +34,8 @@ void Rect::DrawBorder()
 	glVertex2f(centre[0] + extents[0], centre[1] + extents[1]);
 	glEnd();
 }
+
+void Rect::SetScissor()
+{
+	glScissor(centre[0] - extents[0], centre[1] + extents[1], extents[0] * 2, extents[1] * 2);
+}

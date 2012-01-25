@@ -304,18 +304,17 @@ NeuralNetwork::NeuralNetwork(int numberOfInputs, int numberOfOutputs, int depth,
 	for (int i = 0; i <= depth; ++i)
 	{
 		std::vector<Connection*> connectionLayer;
-		int connectionNum = (rand() % perceptrons[i].size()) * 15;
-		connectionNum += perceptrons[i].size() * 2;
-		connectionCount += connectionNum;
-		for (int j = 0; j < connectionNum; ++j)
+		for (int j = 0; j < perceptrons[i].size() ; ++j)
 		{
-			int inputPos = rand() % perceptrons[i].size();
-			int outputPos = rand() % perceptrons[i + 1].size();
-			float weight = (float)rand() / (float) RAND_MAX;
-			Perceptron* outputNode = perceptrons[i + 1][outputPos];
-			connectionLayer.push_back(new Connection(inputPos, weight, outputNode, outputPos));
+			for (int k = 0; k < perceptrons[i + 1].size(); ++k)
+			{
+				float weight = (float)rand() / (float) RAND_MAX;
+				Perceptron* outputNode = perceptrons[i + 1][k];				
+				connectionLayer.push_back(new Connection(i, weight, outputNode, k));
+			}
 		}
 		connections.push_back(connectionLayer);
+		connectionCount += connectionLayer.size();
 	}
 	
 }

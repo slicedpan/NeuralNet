@@ -9,6 +9,7 @@ public:
 	~Rect(void);
 	void Draw();
 	void DrawBorder();
+	void SetScissor();
 	inline bool Intersects(Vec2 point)
 	{
 		return (point[0] > centre[0] - extents[0] && point[0] < centre[0] + extents[0] && \

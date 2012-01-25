@@ -40,13 +40,14 @@ double alpha = 0;                                  // Set by idle function.
 double beta = 0;                                   // Set by mouse X.
 double ldistance = - (farPlane - nearPlane) / 2;    // Set by mouse Y.
 
-void GenerateShapes(Rect* bounds);
+void GenerateShapes(Rect* bounds, int index);
+
 
 NeuralNetwork * nnet;
 
 char* filename = "nnet.bin";
 
-vector<DrawableObject*> objects;
+vector<DrawableObject*> objects[8];
 vector<Rect*> rectangles;
 vector<ChangeContainer*> changes;
 
@@ -66,17 +67,20 @@ void GenerateMutations()
 		delete changes[i];
 	}
 	changes.clear();
-	for (int i = 0; i < objects.size(); ++i)
+	for (int j = 0; j < 8; ++j)
 	{
-		delete objects[i];
+		for (int i = 0; i < objects[j].size(); ++i)
+		{
+			delete objects[j][i];
+		}
+		objects[j].clear();
 	}
-	objects.clear();
 	for (int i = 0; i < 8; ++i)
 	{
-		ChangeContainer* changeContainer = nnet->Mutate(40);
+		ChangeContainer* changeContainer = nnet->Mutate(20);
 		changes.push_back(changeContainer);
 		nnet->ApplyChanges(changeContainer);
-		GenerateShapes(rectangles[i]);
+		GenerateShapes(rectangles[i], i);
 		nnet->Revert(changeContainer);
 	}
 }
@@ -85,7 +89,7 @@ void setup()
 {
 	srand(time(NULL));
 	if (!(nnet = NeuralNetwork::LoadFromFile(filename)))
-		nnet = new NeuralNetwork(8, 8, 5, 250);
+		nnet = new NeuralNetwork(8, 80, 5, 50);
 	float fw = (float)width;
 	float fh = (float)height;
 	for (int i = 0; i < 16; ++i)
@@ -108,42 +112,32 @@ void setup()
 void display ()
 {
  	glClear(GL_COLOR_BUFFER_BIT);
-	for (int i = 0; i < objects.size(); ++i)
+	glEnable(GL_SCISSOR_TEST);
+	for (int j = 0; j < 8; ++j)
 	{
-		objects[i]->Draw();
+		rectangles[j]->SetScissor();
+		for (int i = 0; i < objects[j].size(); ++i)
+		{
+			objects[j][i]->Draw();
+		}
+		rectangles[j]->DrawBorder();
 	}
-	for (int i = 0; i < rectangles.size(); ++i)
-	{
-		rectangles[i]->DrawBorder();
-	}
+	glDisable(GL_SCISSOR_TEST);
 	glutSwapBuffers();
 }
 
-void GenerateShape(Rect* bounds)
+void GenerateShapes(Rect* bounds, int index)
 {
-	float* output = nnet->Compute(inputArray);	
+	float* output = nnet->Compute(origArray);	
 	Vec2 offset = bounds->GetCentre() - bounds->GetExtents();
 	float width = bounds->GetExtents()[0] * 2.0f;
 	float height = bounds->GetExtents()[1] * 2.0f;
-	objects.push_back(new Rect(Vec2(output[0] * width,output[1] * height) + offset, Vec2(output[2] * width, output[3] * height), \
-		Vec4(output[4], output[5], output[6], output[7])));
-	
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < 10; ++i)
 	{
-		inputArray[i] = output[i];
+		int ptrOffs = i * 8;
+		objects[index].push_back(new Rect(Vec2(output[ptrOffs] * width,output[ptrOffs + 1] * height) + offset, Vec2(output[ptrOffs + 2] * width, output[ptrOffs + 3] * height), \
+		Vec4(output[ptrOffs + 4], output[ptrOffs + 5], output[ptrOffs + 6], output[ptrOffs + 7])));
 	}	
-}
-
-void GenerateShapes(Rect* bounds)
-{
-	for (int i = 0; i < 8; ++i)
-	{
-		inputArray[i] = origArray[i];
-	}
-	for (int i = 0; i < 30; ++i)
-	{
-		GenerateShape(bounds);
-	}
 }
 
 // This function is called when there is nothing else to do.
@@ -195,7 +189,7 @@ void reshapeMainWindow (int newWidth, int newHeight)
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0.0, (double)width, (double)height,0.0, 0.0, 1.0);	
+	glOrtho(0.0, (double)width, (double)height, 0.0, 0.0, 1.0);	
 }
 
 // Display help.
