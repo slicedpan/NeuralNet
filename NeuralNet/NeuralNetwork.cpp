@@ -135,7 +135,7 @@ bool NeuralNetwork::InitFromFile(char* filename)
 	fread(&depth, sizeof(int), 1, file);
 	int layerWidth;
 	fread(&layerWidth, sizeof(int), 1, file);
-
+	inputs = layerWidth;
 	std::vector<Perceptron*> layer;
 	for (int i = 0; i < layerWidth; ++i)
 	{
@@ -177,11 +177,13 @@ bool NeuralNetwork::InitFromFile(char* filename)
 	}
 
 	perceptrons.push_back(layer);
+	outputs = layerWidth;
 
 	std::vector<Connection*> connectionLayer;
 	for (int j = 0; j <= depth; ++j)
 	{
 		fread(&layerWidth, sizeof(int), 1, file);
+		connectionLayer.clear();
 		for (int i = 0; i < layerWidth; ++i)
 		{
 			int inputIndex;
