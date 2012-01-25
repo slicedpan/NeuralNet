@@ -132,6 +132,8 @@ bool NeuralNetwork::InitFromFile(char* filename)
 	FILE* file = fopen(filename, "rb");
 	if (!file)
 		return false;
+	connectionCount = 0;
+	nodeCount = 0;
 	fread(&depth, sizeof(int), 1, file);
 	int layerWidth;
 	fread(&layerWidth, sizeof(int), 1, file);
@@ -149,6 +151,7 @@ bool NeuralNetwork::InitFromFile(char* filename)
 		layer.push_back(node);
 	}
 	perceptrons.push_back(layer);
+	nodeCount += layer.size();
 
 	for (int j = 1; j <= depth; ++j)
 	{		
@@ -163,6 +166,7 @@ bool NeuralNetwork::InitFromFile(char* filename)
 			layer.push_back(new Perceptron(thresh, value));
 		}
 		perceptrons.push_back(layer);
+		nodeCount += layer.size();
 	}
 
 	fread(&layerWidth, sizeof(int), 1, file);
@@ -177,6 +181,8 @@ bool NeuralNetwork::InitFromFile(char* filename)
 	}
 
 	perceptrons.push_back(layer);
+	nodeCount += layer.size();
+
 	outputs = layerWidth;
 
 	std::vector<Connection*> connectionLayer;
@@ -195,6 +201,7 @@ bool NeuralNetwork::InitFromFile(char* filename)
 			Perceptron* outputNode = perceptrons[j + 1][outputIndex];
 			connectionLayer.push_back(new Connection(inputIndex, weight, outputNode, outputIndex));
 		}
+		connectionCount += connectionLayer.size();
 		connections.push_back(connectionLayer);
 	}
 	return true;
