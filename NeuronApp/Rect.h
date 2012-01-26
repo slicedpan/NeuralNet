@@ -1,6 +1,6 @@
 #pragma once
 #include "drawableobject.h"
-#include "svl/svl.h"
+#include <svl\SVL.h>
 
 class Rect : public DrawableObject
 {
@@ -22,6 +22,10 @@ public:
 	inline Vec2 GetExtents()
 	{
 		return extents;
+	}
+	inline Vec4& GetColour()
+	{
+		return colour;
 	}
 private:
 	Vec2 centre;

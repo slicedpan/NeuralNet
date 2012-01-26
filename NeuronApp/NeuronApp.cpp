@@ -42,6 +42,7 @@ double ldistance = - (farPlane - nearPlane) / 2;    // Set by mouse Y.
 
 void GenerateShapes(Rect* bounds, int index);
 
+bool sensibleShapes = false;
 
 NeuralNetwork * nnet;
 
@@ -77,7 +78,7 @@ void GenerateMutations()
 	}
 	for (int i = 0; i < 8; ++i)
 	{
-		ChangeContainer* changeContainer = nnet->Mutate(400);
+		ChangeContainer* changeContainer = nnet->Mutate(600);
 		changes.push_back(changeContainer);
 		nnet->ApplyChanges(changeContainer);
 		GenerateShapes(rectangles[i], i);
@@ -89,7 +90,7 @@ void setup()
 {
 	srand(time(NULL));
 	if (!(nnet = NeuralNetwork::LoadFromFile(filename)))
-		nnet = new NeuralNetwork(8, 80, 10, 50);
+		nnet = new NeuralNetwork(8, 80, 4, 50);
 	float fw = (float)width;
 	float fh = (float)height;
 	for (int i = 0; i < 16; ++i)
@@ -136,7 +137,7 @@ void GenerateShapes(Rect* bounds, int index)
 	{
 		int ptrOffs = i * 8;
 		objects[index].push_back(new Rect(Vec2(output[ptrOffs] * width,output[ptrOffs + 1] * height) + offset, Vec2(output[ptrOffs + 2] * width, output[ptrOffs + 3] * height), \
-		Vec4(output[ptrOffs + 4], output[ptrOffs + 5], output[ptrOffs + 6], output[ptrOffs + 7])));
+		Vec4(output[ptrOffs + 4], output[ptrOffs + 5], output[ptrOffs + 6], 1.0f)));
 	}	
 }
 
@@ -162,6 +163,24 @@ void mouseMovement (int mx, int my)
 
    // Redisplay image.
    glutPostRedisplay();
+}
+
+float Fitness(int index)
+{
+	float avgBrightness;	
+	float avgDistance;
+
+	for (int i = 0; i < objects[index].size(); ++i)
+	{
+		avgBrightness = len(objects[index][i]->GetColour());
+	}
+	avgBrightness /= objects[index].size();
+
+	for (int i = 0; i < objects[index].size(); ++i)
+	{
+
+	}
+			
 }
 
 void mouseClick(int button, int state, int x, int y)

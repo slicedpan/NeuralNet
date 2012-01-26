@@ -12,7 +12,7 @@ OutputNode::~OutputNode(void)
 
 float OutputNode::GetValue()
 {
-	return currentValue / count;
+	return Perceptron::GetValue();	
 }
 
 void OutputNode::Increment(float amount)

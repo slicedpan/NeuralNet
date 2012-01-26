@@ -364,7 +364,8 @@ float* NeuralNetwork::Compute(float* inputData)
 
 	for (int i = 0; i < outputs; ++i)
 	{
-		outputArray[i] = perceptrons[depth + 1][i]->GetValue();
+		float blah = perceptrons[depth + 1][i]->GetValue();
+		outputArray[i] = blah;
 	}
 	return outputArray;
 }
