@@ -27,6 +27,14 @@ public:
 	{
 		return colour;
 	}
+	inline Vec2& GetPosition()
+	{
+		return centre;
+	}
+	inline Vec2& GetSize()
+	{
+		return extents * 2.0f;
+	}
 private:
 	Vec2 centre;
 	Vec2 extents;

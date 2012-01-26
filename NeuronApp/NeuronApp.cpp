@@ -18,7 +18,7 @@ using namespace std;
 
 // Initial size of graphics window.
 const int WIDTH  = 1200;
-const int HEIGHT = 600;
+const int HEIGHT = 800;
 
 // Current size of window.
 int width  = WIDTH;
@@ -51,6 +51,16 @@ char* filename = "nnet.bin";
 vector<DrawableObject*> objects[8];
 vector<Rect*> rectangles;
 vector<ChangeContainer*> changes;
+
+float colourWeight = 1.0f;
+float sizeWeight = 1.0f;
+float areaWeight = 1.0f;
+float distanceWeight = 1.0f;
+
+Rect colourRect(Vec2(30.0f, 700.0f), Vec2(30.0f, 100.0f), Vec4(1.0f, 0.0f, 0.0f, 1.0f));
+Rect areaRect(Vec2(90.0f, 700.0f), Vec2(30.0f, 100.0f), Vec4(0.7f, 0.0f, 0.7f, 1.0f));
+Rect distanceRect(Vec2(150.0f, 700.0f), Vec2(30.0f, 100.0f), Vec4(0.0f, 1.0f, 0.0f, 1.0f));
+Rect sizeRect(Vec2(210.0f, 700.0f), Vec2(30.0f, 100.0f), Vec4(0.0f, 0.0f, 1.0f, 1.0f));
 
 float inputArray[16];
 
@@ -124,6 +134,12 @@ void display ()
 		rectangles[j]->DrawBorder();
 	}
 	glDisable(GL_SCISSOR_TEST);
+
+	colourRect.DrawBorder();
+	areaRect.DrawBorder();
+	distanceRect.DrawBorder();
+	sizeRect.DrawBorder();
+
 	glutSwapBuffers();
 }
 
@@ -142,6 +158,10 @@ void GenerateShapes(Rect* bounds, int index)
 }
 
 // This function is called when there is nothing else to do.
+
+int initCount = 100000;
+float Fitness(int index);
+
 void idle ()
 {
    const double STEP = 0.1;
@@ -151,6 +171,29 @@ void idle ()
       alpha -= ALL_ROUND;
 
    // Display normalized coordinates in title bar.
+
+   char buf[256];   
+   sprintf(buf, "Colour Weight: %f, area Weight: %f, Distance Weight: %f, Size Weight: %f", colourWeight, areaWeight, distanceWeight, sizeWeight);
+
+   if (initCount < 100000)
+   {
+	   sprintf(buf, "Choosing fittest... iteration: %d", initCount);
+	   float maxFitness = 0.0f;
+	   int choice = -1;
+	   for (int i = 0; i < 8; ++i)
+	   {
+		   float currentFitness = Fitness(i);
+		   if (maxFitness < currentFitness)
+		   {
+			   maxFitness = currentFitness;
+			   choice = i;
+		   }
+	   }
+	   nnet->ApplyChanges(changes[choice]);
+	   GenerateMutations();
+	   ++initCount;
+   }
+   glutSetWindowTitle(buf);
 
 	glutPostRedisplay();
 }
@@ -167,19 +210,45 @@ void mouseMovement (int mx, int my)
 
 float Fitness(int index)
 {
-	float avgBrightness;	
-	float avgDistance;
+	float avgBrightness = 0.0f;	
+	float avgDistance = 0.0f;
+	float avgSizeDiff = 0.0f;
+	float minX = 1.0f, minY = 1.0f, maxX = 0.0f, maxY = 0.0f;
+	float area;
 
 	for (int i = 0; i < objects[index].size(); ++i)
 	{
-		avgBrightness = len(objects[index][i]->GetColour());
+		Vec4 rgbaColour = objects[index][i]->GetColour();
+		Vec3 rgbColour = Vec3(rgbaColour[0], rgbaColour[1], rgbaColour[2]);
+		avgBrightness += len(rgbColour);
 	}
 	avgBrightness /= objects[index].size();
-
+	
 	for (int i = 0; i < objects[index].size(); ++i)
 	{
-
+		Vec2 iPos = objects[index][i]->GetPosition();
+		Vec2 size = objects[index][i]->GetSize();
+		float sizeDiff = (size[0] * size[1]) - 4900.0f;
+		avgSizeDiff += fabs(sizeDiff);
+		for (int j = 0; j < objects[index].size(); ++j)
+		{
+			if (i != j)
+				avgDistance += len(iPos - objects[index][j]->GetPosition());
+		}
+		if (iPos[0] > maxX)
+			maxX = iPos[0];
+		else if (iPos[0] < minX)
+			minX = iPos[0];
+		if (iPos[1] > maxY)
+			maxY = iPos[1];
+		else if (iPos[1] < minY)
+			minY = iPos[1];
 	}
+	avgDistance /= (objects[index].size() - 1) * (objects[index].size());
+	avgSizeDiff /= objects[index].size();
+	area = (maxX - minX) * (maxY - minY);
+
+	return (colourWeight * avgBrightness) + (avgDistance * distanceWeight) + (area * areaWeight) + (avgSizeDiff * sizeWeight);
 			
 }
 
@@ -187,14 +256,33 @@ void mouseClick(int button, int state, int x, int y)
 {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
+		Vec2 mousePos((float)x, (float)y);
 		for (int i = 0; i < rectangles.size(); ++i)
 		{
-			if (rectangles[i]->Intersects(Vec2((float)x, (float)y)))
+			if (rectangles[i]->Intersects(mousePos))
 			{
 				nnet->ApplyChanges(changes[i]);
 				GenerateMutations();
-				break;
+				return;
 			}
+		}
+		float* thingToChange = 0;
+
+		if (colourRect.Intersects(mousePos))
+			thingToChange = &colourWeight;
+		else if (sizeRect.Intersects(mousePos))
+			thingToChange = &sizeWeight;
+		else if (distanceRect.Intersects(mousePos))
+			thingToChange = &distanceWeight;
+		else if (areaRect.Intersects(mousePos))
+			thingToChange = &areaWeight;
+
+		if (thingToChange)
+		{	
+			if (y > 700)
+				*thingToChange -= 0.1f;
+			else
+				*thingToChange += 0.1f;
 		}
 	}
 }
@@ -234,6 +322,9 @@ void graphicKeys (unsigned char key, int x, int y)
 	case 'm':
 		nnet->ApplyChanges(nnet->Mutate(3000));
 		GenerateMutations();
+		break;
+	case 'g':
+		initCount = 0;
 		break;
 	default:
 		cout << key << endl;
