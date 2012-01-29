@@ -4,7 +4,7 @@
 class Perceptron
 {
 public:
-	Perceptron(float thresholdValue, float selfValue);
+	Perceptron(float thresholdValue);
 	~Perceptron(void);
 	virtual void Increment(float amount);
 	virtual float GetValue();
@@ -14,9 +14,8 @@ public:
 	{
 		return threshold;
 	}
-	float value;
-protected:
 	float threshold;
+protected:
 	float currentValue;	
 };
 

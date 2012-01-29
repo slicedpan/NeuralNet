@@ -2,7 +2,7 @@
 #include "OutputNode.h"
 
 
-OutputNode::OutputNode(void) : Perceptron(0.0f, 0.0f)
+OutputNode::OutputNode(void) : Perceptron(0.0f)
 {
 }
 
@@ -12,7 +12,7 @@ OutputNode::~OutputNode(void)
 
 float OutputNode::GetValue()
 {
-	return Perceptron::GetValue();	
+	return currentValue / count;	
 }
 
 void OutputNode::Increment(float amount)

@@ -100,7 +100,7 @@ void setup()
 {
 	srand(time(NULL));
 	if (!(nnet = NeuralNetwork::LoadFromFile(filename)))
-		nnet = new NeuralNetwork(8, 80, 4, 50);
+		nnet = new NeuralNetwork(8, 80, 4, 80);
 	float fw = (float)width;
 	float fh = (float)height;
 	for (int i = 0; i < 16; ++i)
@@ -159,7 +159,7 @@ void GenerateShapes(Rect* bounds, int index)
 
 // This function is called when there is nothing else to do.
 
-int initCount = 100000;
+int initCount = 1000;
 float Fitness(int index);
 
 void idle ()
@@ -175,7 +175,7 @@ void idle ()
    char buf[256];   
    sprintf(buf, "Colour Weight: %f, area Weight: %f, Distance Weight: %f, Size Weight: %f", colourWeight, areaWeight, distanceWeight, sizeWeight);
 
-   if (initCount < 100000)
+   if (initCount < 1000)
    {
 	   sprintf(buf, "Choosing fittest... iteration: %d", initCount);
 	   float maxFitness = 0.0f;
@@ -325,6 +325,9 @@ void graphicKeys (unsigned char key, int x, int y)
 		break;
 	case 'g':
 		initCount = 0;
+		break;
+	case 's':
+		initCount = 1000;
 		break;
 	default:
 		cout << key << endl;

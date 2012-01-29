@@ -29,7 +29,7 @@ void NeuralNetwork::ApplyNetChange(NetChange* change)
 
 void NeuralNetwork::ApplyNodeChange(NodeChange* change)
 {
-	perceptrons[change->layer][change->index]->value = change->newValue;
+	perceptrons[change->layer][change->index]->threshold = change->newValue;
 }
 
 void NeuralNetwork::RevertNetChange(NetChange* change)
@@ -39,7 +39,7 @@ void NeuralNetwork::RevertNetChange(NetChange* change)
 
 void NeuralNetwork::RevertNodeChange(NodeChange* change)
 {
-	perceptrons[change->layer][change->index]->value = change->oldValue;
+	perceptrons[change->layer][change->index]->threshold = change->oldValue;
 }
 
 /*
@@ -67,7 +67,7 @@ NodeChange* NeuralNetwork::ChangeNodeValue()
 	NodeChange* change = new NodeChange();
 	change->layer = rand() % depth + 1;
 	change->index = rand() % perceptrons[change->layer].size();
-	change->oldValue = perceptrons[change->layer][change->index]->value;
+	change->oldValue = perceptrons[change->layer][change->index]->threshold;
 	change->newValue = (float) rand() / RAND_MAX;
 	return change;
 }
@@ -77,7 +77,7 @@ void NeuralNetwork::Revert(ChangeContainer* changeContainer)
 	for (int i = 0; i < changeContainer->nodeChanges.size(); ++i)
 	{
 		Perceptron* node = perceptrons[changeContainer->nodeChanges[i]->layer][changeContainer->nodeChanges[i]->index];
-		node->value = changeContainer->nodeChanges[i]->oldValue;
+		node->threshold = changeContainer->nodeChanges[i]->oldValue;
 	}
 	for (int i = 0; i < changeContainer->netChanges.size(); ++i)
 	{
@@ -91,7 +91,7 @@ void NeuralNetwork::ApplyChanges(ChangeContainer* changeContainer)
 	for (int i = 0; i < changeContainer->nodeChanges.size(); ++i)
 	{
 		Perceptron* node = perceptrons[changeContainer->nodeChanges[i]->layer][changeContainer->nodeChanges[i]->index];
-		node->value += changeContainer->nodeChanges[i]->newValue - changeContainer->nodeChanges[i]->oldValue;
+		node->threshold += changeContainer->nodeChanges[i]->newValue - changeContainer->nodeChanges[i]->oldValue;
 	}
 	for (int i = 0; i < changeContainer->netChanges.size(); ++i)
 	{
@@ -144,7 +144,6 @@ bool NeuralNetwork::InitFromFile(char* filename)
 		int value;
 		int thresh;
 		InputNode* node;
-		fread(&value, sizeof(float), 1, file);
 		fread(&thresh, sizeof(float), 1, file);		
 		node = new InputNode();
 		inputLayer.push_back(node);
@@ -161,9 +160,8 @@ bool NeuralNetwork::InitFromFile(char* filename)
 		{			
 			float thresh;
 			float value;
-			fread(&value, sizeof(float), 1, file);
 			fread(&thresh, sizeof(float), 1, file);
-			layer.push_back(new Perceptron(thresh, value));
+			layer.push_back(new Perceptron(thresh));
 		}
 		perceptrons.push_back(layer);
 		nodeCount += layer.size();
@@ -175,7 +173,6 @@ bool NeuralNetwork::InitFromFile(char* filename)
 	{
 		float value;
 		float thresh;
-		fread(&value, sizeof(float), 1, file);
 		fread(&thresh, sizeof(float), 1, file);
 		layer.push_back(new OutputNode());
 	}
@@ -216,7 +213,6 @@ void NeuralNetwork::SaveToFile(char* filename)
 	fwrite(&layerWidth, sizeof(int), 1, file);
 	for (int i = 0; i < layerWidth; ++i)
 	{
-		fwrite(&(inputLayer[i]->value), sizeof(float), 1, file);
 		int thresh = inputLayer[i]->GetThreshold();
 		fwrite(&thresh, sizeof(float), 1, file);		
 	}
@@ -227,7 +223,6 @@ void NeuralNetwork::SaveToFile(char* filename)
 		fwrite(&layerWidth, sizeof(int), 1, file);
 		for (int i = 0; i < layerWidth; ++i)
 		{
-			fwrite(&(perceptrons[j][i]->value), sizeof(float), 1, file);
 			float thresh = perceptrons[j][i]->GetThreshold();
 			fwrite(&thresh, sizeof(float), 1, file);
 		}
@@ -237,7 +232,6 @@ void NeuralNetwork::SaveToFile(char* filename)
 	fwrite(&layerWidth, sizeof(int), 1, file);
 	for (int i = 0; i < layerWidth; ++i)
 	{
-		fwrite(&(perceptrons[depth + 1][i]->value), sizeof(float), 1, file);
 		float thresh = perceptrons[depth + 1][i]->GetThreshold();
 		fwrite(&thresh, sizeof(float), 1, file);
 	}
@@ -289,7 +283,7 @@ NeuralNetwork::NeuralNetwork(int numberOfInputs, int numberOfOutputs, int depth,
 		{
 			float threshold = (float)rand() / (float)RAND_MAX;
 			float value = (float)rand() / (float)RAND_MAX;
-			layer.push_back(new Perceptron(threshold, value));
+			layer.push_back(new Perceptron(threshold));
 		}
 		perceptrons.push_back(layer);
 		nodeCount += width;
@@ -316,8 +310,7 @@ NeuralNetwork::NeuralNetwork(int numberOfInputs, int numberOfOutputs, int depth,
 		}
 		connections.push_back(connectionLayer);
 		connectionCount += connectionLayer.size();
-	}
-	
+	}	
 }
 
 int NeuralNetwork::Inputs()
@@ -350,15 +343,16 @@ float* NeuralNetwork::Compute(float* inputData)
 	}
 
 	for (int i = 0; i <= depth; ++i)
-	{
+	{		
+		if (i == depth)
+		{
+			i = i;
+		}
 		for (int j = 0; j < connections[i].size(); ++j)
 		{
-			Perceptron* inNode = perceptrons[i][connections[i][j]->inputIndex];
-			if (inNode->CheckFired())
-			{
-				connections[i][j]->Activate(inNode->GetValue());
-				++fireCount;
-			}
+			Perceptron* inNode = perceptrons[i][connections[i][j]->inputIndex];			
+			connections[i][j]->Activate(inNode->GetValue());
+			++fireCount;			
 		}
 	}
 
