@@ -100,7 +100,7 @@ void setup()
 {
 	srand(time(NULL));
 	if (!(nnet = NeuralNetwork::LoadFromFile(filename)))
-		nnet = new NeuralNetwork(8, 80, 4, 50);
+		nnet = new NeuralNetwork(8, 80, 4, 80);
 	float fw = (float)width;
 	float fh = (float)height;
 	for (int i = 0; i < 16; ++i)
