@@ -1,0 +1,34 @@
+\begin{thebibliography}{1}
+
+\bibitem{bertsekas1995nonlinear}
+D.~Bertsekas.
+\newblock {\em Nonlinear programming}.
+\newblock Optimization and neural computation series. Athena Scientific, 1995.
+
+\bibitem{deCastro:2008:RIM:1363686.1364088}
+A.~P.~A. de~Castro and J.~D. S.~o. da~Silva.
+\newblock Restoring images with a multiscale neural network based technique.
+\newblock In {\em Proceedings of the 2008 ACM symposium on Applied computing},
+  SAC '08, pages 1693--1697, New York, NY, USA, 2008. ACM.
+
+\bibitem{Lee:2002:EAF:646864.708276}
+B.-H. Lee, K.-H. Kim, Y.~Won, and J.~Nam.
+\newblock Efficient and automatic faces detection based on skin-tone and neural
+  network model.
+\newblock In {\em Proceedings of the 15th international conference on
+  Industrial and engineering applications of artificial intelligence and expert
+  systems: developments in applied artificial intelligence}, IEA/AIE '02, pages
+  57--66, London, UK, UK, 2002. Springer-Verlag.
+
+\bibitem{Zhang:1992:ANN:503720.503776}
+H.~Zhang, J.~Guan, and G.~C. Sun.
+\newblock Artificial neural network-based image pattern recognition.
+\newblock In {\em Proceedings of the 30th annual Southeast regional
+  conference}, ACM-SE 30, pages 437--441, New York, NY, USA, 1992. ACM.
+
+\bibitem{Zhao:2003:FRL:954339.954342}
+W.~Zhao, R.~Chellappa, P.~J. Phillips, and A.~Rosenfeld.
+\newblock Face recognition: A literature survey.
+\newblock {\em ACM Comput. Surv.}, 35:399--458, December 2003.
+
+\end{thebibliography}

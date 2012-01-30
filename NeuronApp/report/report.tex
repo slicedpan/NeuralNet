@@ -21,7 +21,7 @@
 \maketitle
 
 \begin{abstract}
-Artificial Neural Networks are computational tools that have found widespread use in a number of varied fields in computer science. In particular they have had widespread success in many areas of computer graphics, for example in image classification \cite{Zhang:1992:ANN:503720.503776}, face detection \cite{Lee:2002:EAF:646864.708276} and recognition \cite{Zhao:2003:FRL:954339.954342}, and image restoration \cite{deCastro:2008:RIM:1363686.1364088}. Neural Networks are particularly efficient for these tasks since they are well suited for recognising and classifying patterns in input data. This paper investigates how it might be possible to generate aesthetically pleasing images using a Neural Network with random input data. The Neural Network could be trained by using either a fitness function or through human interaction, and thus could learn how to construct an image that would be visually appealing.
+Artificial Neural Networks are computational tools that have found widespread use in a number of varied fields in computer science. In particular they have a wide range of uses in computer graphics, for example in image classification \cite{Zhang:1992:ANN:503720.503776}, face detection \cite{Lee:2002:EAF:646864.708276} and recognition \cite{Zhao:2003:FRL:954339.954342}, and image restoration \cite{deCastro:2008:RIM:1363686.1364088}. Neural Networks are particularly efficient for these tasks since they are well suited for recognising and classifying patterns in input data. This paper investigates how it might be possible to generate aesthetically pleasing images using a Neural Network with random input data. The Neural Network could be trained by using either a fitness function or through human interaction, and thus could learn how to construct an image that would be visually appealing.
 \end{abstract}
 
 \section{Introduction}
@@ -73,7 +73,7 @@ As explained above, the Neural Network used for this project is a feed-forward m
 
 \vspace{3mm} 
 
-In a network of this type, the learning process consists of altering the connection weights and threshold values of each unit, in such a way that the output performs better as measured by some criteria. Thus these values encode the 'knowledge' of the network. Using back propagation as a training method requires that the desired output be exactly known from a given input. In this case the desired output, (that of a visually appealing image), is too poorly defined to use this technique. Thus an evolutionary algorithm is used to train the network. Every iteration of the application produces a number of distinct images, which are computed by a corresponding number of different variations of the network. The best image (as defined by the user or a fitness function) is chosen, and that network is used as the base for the next iteration. The learning rate of the network can be changed by altering the number of variations to the network structure generated in each iteration.
+In a network of this type, the learning process consists of altering the connection weights and threshold values of each unit, in such a way that the output performs better as measured by some criteria. Hence these values encode the 'knowledge' of the network. Using back propagation as a training method requires that the desired output be exactly known from a given input. In this case the desired output, (that of a visually appealing image), is too poorly defined to use this technique. Thus an evolutionary algorithm is used to train the network. Every iteration of the application produces a number of distinct images, which are computed by a corresponding number of different variations of the network. The best image (as defined by the user or a fitness function) is chosen, and that network is used as the base for the next iteration. The learning rate of the network can be changed by altering the number of variations to the network structure generated in each iteration.
 
 \vspace{3mm}
 
@@ -86,17 +86,18 @@ The outputs from the network are a set of real numbers between one and zero. Eac
 
 \section{Implementation}
 \label{sec:impl}
-The application accompanying this paper is written in C++, and uses OpenGL and GLUT for rendering. A screenshot of the program interface is depicted in figure \ref{img:prog}. The network has eight inputs, four hidden layers that consist of eighty units, and eighty outputs. The image is generated from a number of coloured rectangles. Each of these takes eight parameters: x and y coordinates, height, width, and an RGBA colour value. In the current implementation the alpha value has no effect on the rendering. Since there are eighty outputs from the network, each image consists of ten rectangles. As described before, each iteration of the program produces eight different variations of the network, and an image for each one of these is generated. To reduce the memory cost of storing eight different networks, only one network is stored in full in memory. For each variation, a number of different changes to the weights and thresholds are generated. After these changes are applied, they can be reverted. This allows one network to generate eight distinct images using eight different variations. Once the best variation is chosen, the changes that produced that variation are applied permanently to the network and the cycle begins again. The structure of the network can be written to and read from disk, allowing its state to persist after the program exits.
+The application accompanying this paper is written in C++, and uses OpenGL and GLUT for rendering. A screenshot of the program interface is depicted in figure \ref{img:prog}. The network used has eight inputs, four hidden layers that consist of eighty units, and eighty outputs. The image is generated from a number of coloured rectangles. Each of these takes eight parameters: x and y coordinates, height, width, and an RGBA colour value. In the current implementation the alpha value has no effect on the rendering. Since there are eighty outputs from the network, each image consists of ten rectangles. As described before, each iteration of the program produces eight different variations of the network, and an image for each one of these is generated. To reduce the memory cost of storing eight different networks, only one network is stored in full in memory. For each variation, a number of different changes to the weights and thresholds are generated. After these changes are applied, they can be reverted. This allows one network to generate eight distinct images using eight different variations. Once the best variation is chosen, the changes that produced that variation are applied permanently to the network and the cycle begins again. The structure of the network can be written to and read from disk, allowing its state to persist after the program exits.
 
 \vspace{3mm}
 
 The program can operate in two distinct ways. In one, the user can select the most pleasing image out of the eight using the mouse, and thus pick the best variation of the network. The other mode allows a fitness function to be evaluated for each image, and the best image chosen by the application itself. When using the fitness function, there are four parameters that affect how the different criteria are weighted, one for each of the different criteria by which the images are judged. The criteria are the colour brightness, the average distance between the rectangles, the fraction of the total image space that are covered by rectangles, and the difference between the average area of the rectangles and a target area value. These values can be changed at runtime.
 
-\vspace{3mm}
+\vspace{3.2mm}
 
 Each unit in the network is an instance of a \textbf{Perceptron} object. These objects expose the following functionality:
 
 \begin{verbatim}
+
 class Perceptron
 {
 public:
@@ -118,6 +119,7 @@ public:
     void SetValue(float amount);
 };
 
+
 class OutputNode : public Perceptron
 {
 public:
@@ -127,7 +129,7 @@ public:
 
 The \textbf{SetValue} function allows the value of the \textbf{InputNode} to be set directly, and the \textbf{GetValue} function allows the normalised output from each \textbf{OutputNode} to be read.
 
-\vspace{3mm}
+\vspace{4.2mm}
 
 Each connection in the network is an instance of a \textbf{Connection} object:
 
@@ -161,6 +163,8 @@ Some output from the program is shown in figure \ref{img:res1}. The image shows 
 
 The images generated by the network bear little relation to the input. This means that the neural network is really only learning to generate one particular image. To remedy this, it would be necessary to teach the network to select variations that produce different output depending on the input. This would result in a further increase in the complexity of the program. As it stands, the network must compute results eight times for each iteration, using the same input. To select variations that produce different outputs for each input, each variation would need to produce a set of images for a set of inputs, and these would have to be compared to ensure they were sufficiently different. 
 
+\vspace{3mm}
+
 \begin{figure}[h!]
 \textit{\caption{Some example output from the program}\label{img:res1}}
 \includegraphics[width=83mm]{appscreen.png}
@@ -170,8 +174,28 @@ The images generated by the network bear little relation to the input. This mean
 \section{Further Enhancements}
 \label{sec:enhance}
 
+As mentioned in \textit{Section \ref{sec:results}}, the network could be trained to produce varying images dependent on the input data. This would allow it to generate many images, that each have some sort of artistic value. The training time for such a network could be quite large, as it would increase the computation time for each successive generation of the network.
+
+\vspace{3mm}
+
+The basic building blocks of the images generated so far are coloured rectangles. It is possible to use many other primitive shapes to build up an image. The network could also be made to output information that determines what type of primitive is drawn, as well as its size, position and colour. Other possible primitives include triangles, circles/ellipses, lines, or arbitrary polygons. Also, each primitive could be drawn with more detail. Instead of simply being a solid colour, they could include gradients, borders etc. Alpha blending could also be used to allow the colours of each primitive to interact and produce more complex effects.
+
+\vspace{3mm}
+
+To generate more complex images, drawing more primitives is necessary. Since a simple rectangle requires at least seven parameters to be drawn (more complex primitives could require more), then the required number of outputs of the network could increase dramatically. This could severely impact computation time. One solution would be to use a different input to generate a further set of primitives and combine the output of multiple computations of the network until a satisfactory image is obtained. 
+
 \section{Possible Applications}
 \label{sec:appl}
+
+The procedural generation of images with aesthetic appeal could be useful in many areas of computer graphics. Video games in particular could benefit greatly from an efficient process of generating such images. The cost of content creation for modern video games has increased dramatically in the last decade. The use of procedurally generated artwork could help small developers to create unique and visually appealing video games, in a cost-effective and efficient way. 
+
+\vspace{3mm}
+
+Images generated in a manner like the one outlined in this paper, are by their nature, quite abstract. These types of images could be particularly suited to graphic design, and in particular web design. 
+
+\vspace{3mm}
+
+Apart from the possible uses in industry, the generation of images by computers is a valid artistic pursuit. Since computer graphics has existed there have been many people who have used computers to generate images of artistic merit. The use of Neural Networks in this regard is largely unexplored, and this paper is one tentative step in that direction.
 
 \bibliographystyle{abbrv}
 \bibliography{report}
