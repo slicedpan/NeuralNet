@@ -54,8 +54,13 @@ vector<ChangeContainer*> changes;
 
 float colourWeight = 1.0f;
 float sizeWeight = 1.0f;
-float areaWeight = 1.0f;
-float distanceWeight = 1.0f;
+float areaWeight = 0.1f;
+float distanceWeight = 5.0f;
+
+float lastColour = 0.0f;
+float lastSize = 0.0f;
+float lastArea = 0.0f;
+float lastDistance = 0.0f;
 
 Rect colourRect(Vec2(30.0f, 700.0f), Vec2(30.0f, 100.0f), Vec4(1.0f, 0.0f, 0.0f, 1.0f));
 Rect areaRect(Vec2(90.0f, 700.0f), Vec2(30.0f, 100.0f), Vec4(0.7f, 0.0f, 0.7f, 1.0f));
@@ -88,7 +93,7 @@ void GenerateMutations()
 	}
 	for (int i = 0; i < 8; ++i)
 	{
-		ChangeContainer* changeContainer = nnet->Mutate(600);
+		ChangeContainer* changeContainer = nnet->Mutate(1000);
 		changes.push_back(changeContainer);
 		nnet->ApplyChanges(changeContainer);
 		GenerateShapes(rectangles[i], i);
@@ -177,7 +182,7 @@ void idle ()
 
    if (initCount < 1000)
    {
-	   sprintf(buf, "Choosing fittest... iteration: %d", initCount);
+	   sprintf(buf, "Choosing fittest... iteration: %d. C: %f, A: %f, D: %f, S: %f", initCount, lastColour, lastArea, lastDistance, lastSize);
 	   float maxFitness = 0.0f;
 	   int choice = -1;
 	   for (int i = 0; i < 8; ++i)
@@ -227,9 +232,9 @@ float Fitness(int index)
 	for (int i = 0; i < objects[index].size(); ++i)
 	{
 		Vec2 iPos = objects[index][i]->GetPosition();
-		Vec2 size = objects[index][i]->GetSize();
+		Vec2 size = objects[index][i]->GetSize() / 2.0f;
 		float sizeDiff = (size[0] * size[1]) - 4900.0f;
-		avgSizeDiff += fabs(sizeDiff);
+		avgSizeDiff += fabs(sizeDiff) / 4900.0f;
 		for (int j = 0; j < objects[index].size(); ++j)
 		{
 			if (i != j)
@@ -245,8 +250,14 @@ float Fitness(int index)
 			minY = iPos[1];
 	}
 	avgDistance /= (objects[index].size() - 1) * (objects[index].size());
+	avgDistance /= sqrt(150.0f * 150.0f);
 	avgSizeDiff /= objects[index].size();
 	area = (maxX - minX) * (maxY - minY);
+	area /= 300.0f * 300.0f;
+	lastColour = avgBrightness;
+	lastDistance = avgDistance;
+	lastArea = area;
+	lastSize = avgSizeDiff;
 
 	return (colourWeight * avgBrightness) + (avgDistance * distanceWeight) + (area * areaWeight) + (avgSizeDiff * sizeWeight);
 			
@@ -320,14 +331,17 @@ void graphicKeys (unsigned char key, int x, int y)
 		exit(0);
 		break;
 	case 'm':
-		nnet->ApplyChanges(nnet->Mutate(3000));
+		for (int i = 0; i < 8; ++i)
+		{
+			origArray[i] = randFloat();
+		}
 		GenerateMutations();
 		break;
 	case 'g':
 		initCount = 0;
 		break;
 	case 's':
-		initCount = 1000;
+		initCount = 100000;
 		break;
 	default:
 		cout << key << endl;

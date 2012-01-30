@@ -1,4 +1,5 @@
 #include "Perceptron.h"
+#include <cmath>
 
 #define M_E 2.7182818284590452353602874713526624f
 
@@ -24,13 +25,6 @@ float Perceptron::GetValue()
 void Perceptron::Increment(float amount)
 {
 	currentValue += amount;
-}
-
-bool Perceptron::CheckFired()
-{
-	if (currentValue > threshold)
-		return true;
-	return false;
 }
 
 void Perceptron::Reset()

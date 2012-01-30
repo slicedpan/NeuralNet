@@ -2,8 +2,8 @@
 
 #include <vector>
 
-class NetChange;
-class NodeChange;
+struct NetChange;
+struct NodeChange;
 
 class ChangeContainer
 {

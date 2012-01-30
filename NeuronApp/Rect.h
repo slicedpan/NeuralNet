@@ -33,7 +33,7 @@ public:
 	}
 	inline Vec2& GetSize()
 	{
-		return extents * 2.0f;
+		return extents;
 	}
 private:
 	Vec2 centre;

@@ -12,7 +12,6 @@ public:
 	float weight;
 	int outputIndex;
 private:
-	Perceptron* connected;
-	
+	Perceptron* connected;	
 };
 

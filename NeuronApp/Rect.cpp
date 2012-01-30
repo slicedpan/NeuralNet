@@ -10,6 +10,7 @@ Rect::Rect(Vec2 pPosition, Vec2 pExtents, Vec4 pColour)
 
 Rect::~Rect(void)
 {
+
 }
 
 void Rect::Draw()

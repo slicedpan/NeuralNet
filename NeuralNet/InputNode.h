@@ -6,6 +6,5 @@ public:
 	InputNode();
 	~InputNode(void);
 	void SetValue(float amount);
-	bool CheckFired();
 };
 

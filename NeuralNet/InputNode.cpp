@@ -14,8 +14,3 @@ void InputNode::SetValue(float amount)
 {
 	currentValue = amount;	
 }
-
-bool InputNode::CheckFired()
-{
-	return true;
-}

@@ -213,7 +213,7 @@ void NeuralNetwork::SaveToFile(char* filename)
 	fwrite(&layerWidth, sizeof(int), 1, file);
 	for (int i = 0; i < layerWidth; ++i)
 	{
-		int thresh = inputLayer[i]->GetThreshold();
+		int thresh = inputLayer[i]->threshold;
 		fwrite(&thresh, sizeof(float), 1, file);		
 	}
 
@@ -223,7 +223,7 @@ void NeuralNetwork::SaveToFile(char* filename)
 		fwrite(&layerWidth, sizeof(int), 1, file);
 		for (int i = 0; i < layerWidth; ++i)
 		{
-			float thresh = perceptrons[j][i]->GetThreshold();
+			float thresh = perceptrons[j][i]->threshold;
 			fwrite(&thresh, sizeof(float), 1, file);
 		}
 	}
@@ -232,7 +232,7 @@ void NeuralNetwork::SaveToFile(char* filename)
 	fwrite(&layerWidth, sizeof(int), 1, file);
 	for (int i = 0; i < layerWidth; ++i)
 	{
-		float thresh = perceptrons[depth + 1][i]->GetThreshold();
+		float thresh = perceptrons[depth + 1][i]->threshold;
 		fwrite(&thresh, sizeof(float), 1, file);
 	}
 
