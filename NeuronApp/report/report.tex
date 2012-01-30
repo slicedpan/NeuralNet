@@ -28,9 +28,12 @@ Artificial Neural Networks are computational tools that have found widespread us
 \label{sec:intro}
 An Artificial Neural Network is a system of independent processing units arranged in layers and with each unit being connected to all others in the layers above and below it. Each unit has multiple inputs and outputs, with the outputs from the previous layer being the inputs to the next, thus the structure of the network forms a directed acyclic graph. This structure is known as a \textit{Feed Forward Neural Network}. It is also possible to create a \textit{Recurrent Neural Network}, i.e. one where the graph will contain cycles, however these types of networks will not be discussed in this paper. The structure of a basic Neural Network is shown in figure \ref{fig:nnimg}. This network has an input and output layer and one \textit{hidden} layer. The number of hidden layers can be varied depending on the specific problem the network aims to solve.
 \begin{figure}[h]
-\textit{\caption{A graphical representation of the structure of a Neural Network}}
-\includegraphics[width=83mm]{neuralnet1000.png}
+\textit{
+\caption{A graphical representation of the structure of a Neural Network}
 \label{fig:nnimg}
+}
+
+\includegraphics[width=83mm]{neuralnet1000.png}
 \end{figure} 
 
 \vspace{3mm}
@@ -76,9 +79,14 @@ In a network of this type, the learning process consists of altering the connect
 
 The outputs from the network are a set of real numbers between one and zero. Each image is generated using a number of coloured primitives, whose dimensions, position and colour are defined by the outputs from the network. The best image can be chosen by the user, or by calculating some metric for each image. Possible metrics to be used to determine what constitutes a good image are: colour distribution, primitive size, coverage of image space and distance between primitives. 
 
+\begin{figure}[h]
+\textit{\caption{The program interface}\label{img:prog}}
+\includegraphics[width=83mm]{window.png}
+\end{figure}
+
 \section{Implementation}
 \label{sec:impl}
-The application accompanying this paper is written in C++, and uses OpenGL and GLUT for rendering. The network has eight inputs, four hidden layers that consist of eighty units, and eighty outputs. The image is generated from a number of coloured rectangles. Each of these takes eight parameters: x and y coordinates, height, width, and an RGBA colour value. In the current implementation the alpha value has no effect on the rendering. Since there are eighty outputs from the network, each image consists of ten rectangles. As described before, each iteration of the program produces eight different variations of the network, and an image for each one of these is generated. To reduce the memory cost of storing eight different networks, only one network is stored in full in memory. For each variation, a number of different changes to the weights and thresholds are generated. After these changes are applied, they can be reverted. This allows one network to generate eight distinct images using eight different variations. Once the best variation is chosen, the changes that produced that variation are applied permanently to the network and the cycle begins again. The structure of the network can be written to and read from disk, allowing its state to persist after the program exits.
+The application accompanying this paper is written in C++, and uses OpenGL and GLUT for rendering. A screenshot of the program interface is depicted in figure \ref{img:prog}. The network has eight inputs, four hidden layers that consist of eighty units, and eighty outputs. The image is generated from a number of coloured rectangles. Each of these takes eight parameters: x and y coordinates, height, width, and an RGBA colour value. In the current implementation the alpha value has no effect on the rendering. Since there are eighty outputs from the network, each image consists of ten rectangles. As described before, each iteration of the program produces eight different variations of the network, and an image for each one of these is generated. To reduce the memory cost of storing eight different networks, only one network is stored in full in memory. For each variation, a number of different changes to the weights and thresholds are generated. After these changes are applied, they can be reverted. This allows one network to generate eight distinct images using eight different variations. Once the best variation is chosen, the changes that produced that variation are applied permanently to the network and the cycle begins again. The structure of the network can be written to and read from disk, allowing its state to persist after the program exits.
 
 \vspace{3mm}
 
@@ -147,6 +155,16 @@ Each layer of the network is implemented as an array of \textbf{Perceptron} obje
 \section{Results}
 \label{sec:results}
 
+Some output from the program is shown in figure \ref{img:res1}. The image shows two separate executions of the program. For each execution, four images were generated at different points through the learning process. The learning process used in both cases was through the use of the fitness function outlined in \textit{Section \ref{sec:impl}}. In the second run (the bottom set of images) the variations were more aggressively selected for images with a large average distance between the rectangles. Thus the rectangles spread out more quickly. The number of iterations between the first and last images is approximately one thousand. Thus it would be infeasible for a human user to supply the information required over such a huge number of generations. Altering the learning rate could ameliorate this problem, however increasing the learning rate to a much larger value can cause instability. 
+
+\vspace{3mm}
+
+The images generated by the network bear little relation to the input. This means that the neural network is really only learning to generate one particular image. To remedy this, it would be necessary to teach the network to select variations that produce different output depending on the input. This would result in a further increase in the complexity of the program. As it stands, the network must compute results eight times for each iteration, using the same input. To select variations that produce different outputs for each input, each variation would need to produce a set of images for a set of inputs, and these would have to be compared to ensure they were sufficiently different. 
+
+\begin{figure}[h!]
+\textit{\caption{Some example output from the program}\label{img:res1}}
+\includegraphics[width=83mm]{appscreen.png}
+\end{figure}
 
 
 \section{Further Enhancements}
@@ -154,6 +172,7 @@ Each layer of the network is implemented as an array of \textbf{Perceptron} obje
 
 \section{Possible Applications}
 \label{sec:appl}
+
 \bibliographystyle{abbrv}
 \bibliography{report}
 
