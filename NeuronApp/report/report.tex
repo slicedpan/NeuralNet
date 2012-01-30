@@ -26,19 +26,16 @@ Artificial Neural Networks are computational tools that have found widespread us
 
 \section{Introduction}
 \label{sec:intro}
-An Artificial Neural Network is a system of independent processing units arranged in layers and with each unit being connected to all others in the layers above and below it. Each unit has multiple inputs and outputs, with the outputs from the previous layer being the inputs to the next, thus the structure of the network forms a directed acyclic graph. This structure is known as a \textit{Feed Forward Neural Network}. It is also possible to create a \textit{Recurrent Neural Network}, i.e. one where the graph will contain cycles, however these types of networks will not be discussed in this paper. The structure of a basic Neural Network is shown in figure \ref{fig:nnimg}. This network has an input and output layer and one \textit{hidden} layer. The number of hidden layers can be varied depending on the specific problem the network aims to solve.
-\begin{figure}[h]
-\textit{
-\caption{A graphical representation of the structure of a Neural Network}
-\label{fig:nnimg}
-}
+An Artificial Neural Network is a system of independent processing units arranged in layers, with the units in each layer having connections to every other unit in the layers above and below it. Each unit has multiple inputs and outputs, with the outputs from the previous layer being the inputs to the next, thus the structure of the network forms a directed acyclic graph. This structure is known as a \textit{Feed Forward Neural Network}. It is also possible to create a \textit{Recurrent Neural Network}, i.e. one where the graph will contain cycles,  however these types of networks will not be discussed in this paper. The structure of a basic Neural Network is shown in figure \ref{fig:nnimg}. This network has an input and output layer and one \textit{hidden} layer. The number of hidden layers can be varied depending on the specific problem the network aims to solve.
 
+\begin{figure}[h]
+\textit{ \caption{A graphical representation of the structure of a Neural Network} \label{fig:nnimg} }
 \includegraphics[width=83mm]{neuralnet1000.png}
-\end{figure} 
+\end{figure}
 
 \vspace{3mm}
 
-In designing a Neural Network, there are a number of choices to be made. The first is the choice of combination function. This function determines how the inputs for each unit are combined to produce a \textit{net input} for the unit. Most Neural Networks use either a linear combination of the inputs, or a Euclidean distance function. Feed Forward Neural Networks are broken down into two main types depending on the function they use. These are the \textit{Multi-layer Perceptron (MLP)} in the case of the linear combination function, and the \textit{Radial Basis Function (RBF)} in the case of the Euclidean distance function. In this paper, only MLP networks will be discussed. The net input, $\nu_{k}$, for each unit is calculated as follows
+In designing a Neural Network, there are a number of choices to be made. The first is the choice of combination function. This function determines how the inputs for each unit are combined to produce a \textit{net input} for the unit. Most Neural Networks use either a linear combination of the inputs, or a Euclidean distance function. Feed Forward Neural Networks are broken down into two main types depending on the combination function they use. These are the \textit{Multi-layer Perceptron (MLP)}, in the case of the linear combination function, and the \textit{Radial Basis Function (RBF)}, in the case of the Euclidean distance function. In this paper, only MLP networks will be discussed. The net input, $\nu_{k}$, for each unit is calculated as follows
 
 \begin{equation}
 \nu_{k} = \sum\limits_{j = 1}^{n} w_{k j} x_{j}
@@ -49,13 +46,13 @@ where $w_{k j}$ is the weight associated with the connection from unit $j$ in th
 
 \vspace{3mm}
 
-The second design choice that must be made is the activation function. This function determines how the net input, as calculated above, is converted into the output value for the unit. In many Neural Network implementations, including the one discussed in this paper, before the net input is transformed by the activation function, it is reduced by an amount know as the \textit{threshold} for the unit. It will be shown in \textit{Section \ref{sec:method}} that this value can be altered as part of the learning process for the network. Denoting the threshold for the $k$-th unit as $\tau_{k}$, the output for that unit$\sigma_{k}$ will be given by
+The second design choice that must be made is the activation function. This function determines how the net input, as calculated above, is converted into the output value for the unit. In many Neural Network implementations, including the one discussed in this paper, before the net input is transformed by the activation function, it is reduced by an amount know as the \textit{threshold} for the unit. It will be shown in \textit{Section \ref{sec:method}} that this value can be altered as part of the learning process for the network. Denoting the threshold for the $k$-th unit as $\tau_{k}$, the output for that unit, $\sigma_{k}$ will be given by
 
 \begin{equation}
 \sigma_{k} = \phi(\nu_{k} - \tau_{k})
 \end{equation}
 
-where $\phi$ is the activation function. The activation function should be one that exhibits non-linearity, since a multi-layered network with a linear activation function can be reduced to a single layer network, thus losing the full computational power of a MLP. Two common activation functions are the hyperbolic tangent function, and the logistic function
+where $\phi$ is the activation function. The activation function should be one that exhibits non-linearity, since a multi-layered network with a linear activation function can be reduced to a single layer network, thus losing the full computational power of a MLP \cite{springerlink}. Two common activation functions are the hyperbolic tangent function, and the logistic function, which is defined as
 
 \begin{equation}
 \label{eqn:logistic}
@@ -64,7 +61,21 @@ where $\phi$ is the activation function. The activation function should be one t
 
 \vspace{3mm}
 
-A further design choice to be considered, is how the network will learn. Typically the network will learn by adjusting the weights of the connections and the threshold values for each unit. The changes that need to be made to the network can be computed by the difference between the output of the network given a certain input, and the desired output. \textit{Back Propagation} is the technique that is typically used to achieve this \cite{bertsekas1995nonlinear}.The details of its operation are beyond the scope of this paper, since it is not the learning technique used in this project. Other possibilities for learning algorithms are using genetic or evolutionary techniques, these will be discussed further in the following section.
+A further design choice to be considered is how the network will learn. Typically the network will learn by adjusting the weights of the connections and the threshold values for each unit. The changes that need to be made to the network can be computed by the difference between the output of the network given a certain input, and the desired output. \textit{Back Propagation} is the technique that is typically used to achieve this \cite{bertsekas1995nonlinear}.The details of its operation are beyond the scope of this paper, since it is not the learning technique used in this project. Other possibilities for learning algorithms are using genetic or evolutionary techniques, these will be discussed further in the following section.
+
+\section{Related Work}
+\label{sec:related}
+
+There are a number of existing methods of image generation and synthesis that rely on the use of Neural Networks. Many of these techniques use the properties of Neural Networks to create textures that model the surface appearance of real-world materials. 
+
+\subsection{Textured Image Synthesis}
+The method outlined in the paper \textit{Textured Image Synthesis and Segmentation via Neural Network Probabilistic Modelling}\cite{Hwang_texturedimage}, uses Neural Networks to categorise different features in a texture. The network can then be used to generate textures that resemble that texture. 
+
+\subsection{Random Neural Network Texture Model}
+This paper \cite{atalay:the}, also outlines a method for generating textures using a Neural Network. It uses a similar technique to the one outlined in \cite{Hwang_texturedimage}. The network is trained using an image of the desired texture, then the network is used to generate textures that resemble that image. The resulting images share some of the features of the original texture, however the algorithm can generate random variations. 
+
+\vspace{3mm}
+The two papers discussed here are both concerned more with pattern recognition, and then using the knowledge of these patterns stored in the network to synthesise images, than simply generating images from scratch. 
 
 \section{Method Outline}
 \label{sec:method}
@@ -73,7 +84,7 @@ As explained above, the Neural Network used for this project is a feed-forward m
 
 \vspace{3mm} 
 
-In a network of this type, the learning process consists of altering the connection weights and threshold values of each unit, in such a way that the output performs better as measured by some criteria. Hence these values encode the 'knowledge' of the network. Using back propagation as a training method requires that the desired output be exactly known from a given input. In this case the desired output, (that of a visually appealing image), is too poorly defined to use this technique. Thus an evolutionary algorithm is used to train the network. Every iteration of the application produces a number of distinct images, which are computed by a corresponding number of different variations of the network. The best image (as defined by the user or a fitness function) is chosen, and that network is used as the base for the next iteration. The learning rate of the network can be changed by altering the number of variations to the network structure generated in each iteration.
+In a network of this type, the learning process consists of altering the connection weights and threshold values of each unit, in such a way that the output performs better as measured by some criteria. Hence these values encode the 'knowledge' of the network. Using back propagation as a training method requires that the desired output be exactly known from a given input. In this case the desired output, (that of a visually appealing image), is too poorly defined to use this technique. Thus an evolutionary algorithm is used to train the network. Every iteration of the application produces a number of distinct images, which are computed by a corresponding number of different variations of the network. The best image (as defined by the user or a fitness function) is chosen, and that network is used as the base for the next iteration. The learning rate of the network can be changed by altering the number of variations to the network's structure generated in each iteration.
 
 \vspace{3mm}
 
@@ -178,11 +189,15 @@ As mentioned in \textit{Section \ref{sec:results}}, the network could be trained
 
 \vspace{3mm}
 
-The basic building blocks of the images generated so far are coloured rectangles. It is possible to use many other primitive shapes to build up an image. The network could also be made to output information that determines what type of primitive is drawn, as well as its size, position and colour. Other possible primitives include triangles, circles/ellipses, lines, or arbitrary polygons. Also, each primitive could be drawn with more detail. Instead of simply being a solid colour, they could include gradients, borders etc. Alpha blending could also be used to allow the colours of each primitive to interact and produce more complex effects.
+The basic building blocks of the images generated so far are coloured rectangles. It is possible to use many other primitive shapes to build up an image. The network could also be made to output information that determines what type of primitive is drawn, as well as its size, position and colour. Other possible primitives include triangles, circles/ellipses, lines, or arbitrary polygons. Also, each primitive could be drawn with more detail. Instead of simply being a solid colour, they could include gradients, borders etc. Furthermore, alpha blending could be used to allow the colours of each primitive to interact and produce more complex effects.
 
 \vspace{3mm}
 
 To generate more complex images, drawing more primitives is necessary. Since a simple rectangle requires at least seven parameters to be drawn (more complex primitives could require more), then the required number of outputs of the network could increase dramatically. This could severely impact computation time. One solution would be to use a different input to generate a further set of primitives and combine the output of multiple computations of the network until a satisfactory image is obtained. 
+
+\vspace{3mm}
+
+As an alternative to coloured primitives, the network could be used to generate spatial and colour-space distortions in the image. Artistic filters could also be controlled using the network, which could increase the complexity and also the visual appeal of the image.
 
 \section{Possible Applications}
 \label{sec:appl}
@@ -195,7 +210,7 @@ Images generated in a manner like the one outlined in this paper, are by their n
 
 \vspace{3mm}
 
-Apart from the possible uses in industry, the generation of images by computers is a valid artistic pursuit. Since computer graphics has existed there have been many people who have used computers to generate images of artistic merit. The use of Neural Networks in this regard is largely unexplored, and this paper is one tentative step in that direction.
+Apart from the possible uses in industry, the generation of images by computers is a valid artistic pursuit. Since computer graphics has existed there have been many people who have used computers to generate images of artistic merit. This paper attempts to use the power of Neural Networks to generate such images. The technique as presented here does not generate particularly complex images, and their aesthetic value is debatable, however a refinement of the technique using some or all of the enhancements outlined in the previous section could generate much more impressive results.
 
 \bibliographystyle{abbrv}
 \bibliography{report}

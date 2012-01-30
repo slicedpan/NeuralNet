@@ -1,5 +1,10 @@
 \begin{thebibliography}{1}
 
+\bibitem{atalay:the}
+V.~Atalay, E.~Gelenbe, and N.~Yalabik.
+\newblock The random neural network model for texture generation.
+\newblock {\em IJPRAI}.
+
 \bibitem{bertsekas1995nonlinear}
 D.~Bertsekas.
 \newblock {\em Nonlinear programming}.
@@ -11,6 +16,11 @@ A.~P.~A. de~Castro and J.~D. S.~o. da~Silva.
 \newblock In {\em Proceedings of the 2008 ACM symposium on Applied computing},
   SAC '08, pages 1693--1697, New York, NY, USA, 2008. ACM.
 
+\bibitem{Hwang_texturedimage}
+J.-N. Hwang and E.~T. yen Chen.
+\newblock Textured image synthesis and segmentation via neural network
+  probabilistic modeling.
+
 \bibitem{Lee:2002:EAF:646864.708276}
 B.-H. Lee, K.-H. Kim, Y.~Won, and J.~Nam.
 \newblock Efficient and automatic faces detection based on skin-tone and neural
@@ -19,6 +29,14 @@ B.-H. Lee, K.-H. Kim, Y.~Won, and J.~Nam.
   Industrial and engineering applications of artificial intelligence and expert
   systems: developments in applied artificial intelligence}, IEA/AIE '02, pages
   57--66, London, UK, UK, 2002. Springer-Verlag.
+
+\bibitem{springerlink}
+E.~Shenouda.
+\newblock A quantitative comparison of different mlp activation functions in
+  classification.
+\newblock In J.~Wang, Z.~Yi, J.~Zurada, B.-L. Lu, and H.~Yin, editors, {\em
+  Advances in Neural Networks - ISNN 2006}, volume 3971 of {\em Lecture Notes
+  in Computer Science}, pages 849--857. Springer Berlin / Heidelberg, 2006.
 
 \bibitem{Zhang:1992:ANN:503720.503776}
 H.~Zhang, J.~Guan, and G.~C. Sun.
